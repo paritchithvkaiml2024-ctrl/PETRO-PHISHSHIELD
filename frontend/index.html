@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PetroPulse AI & PhishShield Enterprise — Unified Industrial & Cyber Defense Suite</title>
+    <meta name="description" content="AI-Powered Petrochemical Predictive Analytics & Enterprise Phishing Threat Intelligence Platform">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+    <!-- Global Floating Notification Banner -->
+    <div id="globalAlertBanner" style="display: none; position: fixed; top: 1rem; right: 1.5rem; z-index: 1000; padding: 0.75rem 1.25rem; border-radius: 8px; color: #fff; font-weight: 700; font-family: var(--font-mono); box-shadow: 0 10px 25px rgba(0,0,0,0.5);"></div>
+
+    <!-- Header & Navigation -->
+    <header class="app-header">
+        <div class="header-container">
+            <div class="brand-wrapper">
+                <div class="brand-icon">⚡</div>
+                <div>
+                    <h1 class="brand-title">APEX INDUSTRIAL & CYBER DEFENSE</h1>
+                    <div class="brand-sub">OPC-UA Telemetry • ML Pipelines • Threat Intelligence</div>
+                </div>
+            </div>
+
+            <!-- Nav Tabs Switcher -->
+            <nav class="nav-tabs" aria-label="Main Navigation">
+                <button class="tab-btn active" data-target="viewPetro" id="tabPetroPulse">
+                    <span>⛽ PetroPulse AI</span>
+                </button>
+                <button class="tab-btn" data-target="viewPhish" id="tabPhishShield">
+                    <span>🛡️ PhishShield Enterprise</span>
+                </button>
+                <button class="tab-btn" data-target="viewTopology" id="tabTopology">
+                    <span>🏗️ K8s & ML Pipeline</span>
+                </button>
+                <button class="tab-btn" data-target="viewSandbox" id="tabSandbox">
+                    <span>⚡ API Sandbox</span>
+                </button>
+            </nav>
+
+            <!-- Status Pills -->
+            <div class="header-telemetry-pills">
+                <div class="status-chip">
+                    <span class="status-dot" id="streamStatusDot"></span>
+                    <span>OPC-UA / Kafka</span>
+                </div>
+                <div class="status-chip">
+                    <span style="color: #38bdf8">Feast: 1.4ms</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-wrapper">
+        
+        <!-- ==========================================
+             VIEW 1: PETROPULSE AI PREDICTIVE ANALYTICS
+             ========================================== -->
+        <section id="viewPetro" class="view-section active-view">
+            <!-- Top KPI Cards -->
+            <div class="metrics-row">
+                <div class="glass-card">
+                    <div class="card-label">Active Unit Status</div>
+                    <div id="kpiUnitStatus" class="threat-badge threat-safe" style="margin: 0.5rem 0;">NOMINAL</div>
+                    <div class="card-subtext">Real-time OPC-UA Telemetry Ingestion</div>
+                </div>
+                <div class="glass-card">
+                    <div class="card-label">XGBoost Estimated RUL</div>
+                    <div id="kpiRulHours" class="card-value text-petro">2,410 hrs</div>
+                    <div class="card-subtext">Remaining Useful Life (Equipment Degradation)</div>
+                </div>
+                <div class="glass-card">
+                    <div class="card-label">LightGBM Hydrocarbon Yield</div>
+                    <div id="kpiYieldLgbm" class="card-value text-cyan">92.4%</div>
+                    <div class="card-subtext">Optimized Catalytic Cracking Efficiency</div>
+                </div>
+                <div class="glass-card">
+                    <div class="card-label">LSTM Anomaly Risk Score</div>
+                    <div id="kpiAnomalyScore" class="card-value text-shield">8.4%</div>
+                    <div class="card-subtext">Reconstruction Loss & Z-Score Metric</div>
+                </div>
+            </div>
+
+            <!-- Unit Selector -->
+            <div class="unit-selector-bar">
+                <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-dim); margin-right: 0.5rem;">REFINERY UNIT:</span>
+                <button class="unit-chip-btn active-unit" data-unit="FCC-01" onclick="selectEquipmentUnit('FCC-01')">🔥 FCC-01 (Catalytic Cracker)</button>
+                <button class="unit-chip-btn" data-unit="HDT-02" onclick="selectEquipmentUnit('HDT-02')">⚡ HDT-02 (Hydrotreater)</button>
+                <button class="unit-chip-btn" data-unit="CDU-03" onclick="selectEquipmentUnit('CDU-03')">🛢️ CDU-03 (Distillation Column)</button>
+                <button class="unit-chip-btn" data-unit="HEX-04" onclick="selectEquipmentUnit('HEX-04')">❄️ HEX-04 (Pre-Heat Exchanger)</button>
+            </div>
+
+            <!-- Telemetry Gauges Grid -->
+            <div class="telemetry-gauges-grid">
+                <div class="gauge-box">
+                    <div class="gauge-title">Temperature</div>
+                    <div id="gaugeTemp" class="gauge-num text-petro">525.2 °C</div>
+                    <div class="gauge-unit">Target: 520-540 °C</div>
+                </div>
+                <div class="gauge-box">
+                    <div class="gauge-title">Pressure</div>
+                    <div id="gaugePress" class="gauge-num text-purple">2.82 bar</div>
+                    <div class="gauge-unit">Normal: 2.5 - 3.2</div>
+                </div>
+                <div class="gauge-box">
+                    <div class="gauge-title">Feed Flow</div>
+                    <div id="gaugeFlow" class="gauge-num text-cyan">381.4 m³/h</div>
+                    <div class="gauge-unit">Rate: Nominal</div>
+                </div>
+                <div class="gauge-box">
+                    <div class="gauge-title">Vibration</div>
+                    <div id="gaugeVib" class="gauge-num text-danger">1.42 mm/s</div>
+                    <div class="gauge-unit">Threshold: &lt; 4.5</div>
+                </div>
+                <div class="gauge-box">
+                    <div class="gauge-title">Catalyst Act.</div>
+                    <div id="gaugeCat" class="gauge-num text-shield">94.6 %</div>
+                    <div class="gauge-unit">Bed Health</div>
+                </div>
+                <div class="gauge-box">
+                    <div class="gauge-title">Viscosity</div>
+                    <div id="gaugeVisc" class="gauge-num">12.4 cP</div>
+                    <div class="gauge-unit">Kinematic</div>
+                </div>
+                <div class="gauge-box">
+                    <div class="gauge-title">H2 Purity</div>
+                    <div id="gaugeH2" class="gauge-num text-cyan">88.1 %</div>
+                    <div class="gauge-unit">Hydrogen Feed</div>
+                </div>
+                <div class="gauge-box">
+                    <div class="gauge-title">Sulfur Load</div>
+                    <div id="gaugeSulfur" class="gauge-num text-warning">119.5 ppm</div>
+                    <div class="gauge-unit">Heavy Stream</div>
+                </div>
+            </div>
+
+            <!-- Dashboard Grid: Main Chart + Anomaly Injection Panel -->
+            <div class="dashboard-grid">
+                <div class="glass-card">
+                    <div class="card-label">
+                        <span>Real-Time Telemetry Stream & LSTM Multi-Step Forecast (PyTorch)</span>
+                        <span style="font-family: var(--font-mono); font-size: 0.72rem; color: #38bdf8;">TimescaleDB Hypertable Sync</span>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="petroTelemetryChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Anomaly Simulation & MLOps -->
+                <div class="glass-card">
+                    <div class="control-panel-heading">🚨 Live Anomaly Injection Console</div>
+                    <div class="anomaly-buttons-grid">
+                        <button class="anomaly-btn" data-anomaly="thermal_runaway">
+                            <span>🔥 Thermal Runaway (+65°C Surge)</span>
+                            <span>⚡</span>
+                        </button>
+                        <button class="anomaly-btn" data-anomaly="compressor_surge">
+                            <span>🌪️ Compressor Surge & Oscillation</span>
+                            <span>⚡</span>
+                        </button>
+                        <button class="anomaly-btn" data-anomaly="valve_cavitation">
+                            <span>⚡ High Vibration & Cavitation</span>
+                            <span>⚡</span>
+                        </button>
+                        <button class="anomaly-btn" data-anomaly="catalyst_poisoning">
+                            <span>🧪 Catalyst Poisoning / Sulfur Spike</span>
+                            <span>⚡</span>
+                        </button>
+                        <button class="anomaly-btn" data-anomaly="sensor_drift">
+                            <span>🎯 Sensor Calibration Drift</span>
+                            <span>⚡</span>
+                        </button>
+                    </div>
+                    <button class="clear-btn" id="btnClearAnomalies">
+                        <span>🔄 Re-Stabilize & Clear Anomalies</span>
+                    </button>
+
+                    <!-- MLOps Table -->
+                    <div style="margin-top: 1.5rem;">
+                        <div class="card-label">Feast Feature Store & MLflow Models</div>
+                        <table class="mlops-table">
+                            <thead>
+                                <tr>
+                                    <th>Model Name</th>
+                                    <th>Version</th>
+                                    <th>Metric</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>XGBoost (RUL)</td>
+                                    <td>v2.4.1</td>
+                                    <td>RMSE: 14.8h</td>
+                                    <td><span style="color: #34d399">PROD</span></td>
+                                </tr>
+                                <tr>
+                                    <td>LightGBM (Yield)</td>
+                                    <td>v3.1.0</td>
+                                    <td>MAPE: 0.42%</td>
+                                    <td><span style="color: #34d399">PROD</span></td>
+                                </tr>
+                                <tr>
+                                    <td>LSTM Forecaster</td>
+                                    <td>v1.8.4</td>
+                                    <td>Loss: 0.0084</td>
+                                    <td><span style="color: #34d399">PROD</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================
+             VIEW 2: PHISHSHIELD ENTERPRISE THREAT PLATFORM
+             ========================================== -->
+        <section id="viewPhish" class="view-section">
+            <div class="phish-scanner-container">
+                <!-- Input Scanner Card -->
+                <div class="glass-card">
+                    <div class="card-label" style="margin-bottom: 0.75rem;">
+                        <span>🛡️ AI Threat Scanner (Scikit-Learn + NLP Ensemble)</span>
+                        <span style="color: #34d399; font-family: var(--font-mono); font-size: 0.75rem;">ML Engine: Active</span>
+                    </div>
+
+                    <!-- Quick Preloaded Attack Scenarios -->
+                    <div style="margin-bottom: 1rem;">
+                        <div class="form-label" style="margin-bottom: 0.4rem;">Pre-loaded Adversarial Scenarios:</div>
+                        <div class="template-quick-bar" id="templatePillsContainer">
+                            <!-- Injected via JS -->
+                        </div>
+                    </div>
+
+                    <!-- Scanner Mode Switcher -->
+                    <div class="nav-tabs" style="width: fit-content; margin-bottom: 1rem;">
+                        <button class="tab-btn active" id="btnModeUrl" onclick="switchPhishInputMode('URL')">URL Deep Scan</button>
+                        <button class="tab-btn" id="btnModeEmail" onclick="switchPhishInputMode('EMAIL')">Email & Header Analysis</button>
+                    </div>
+
+                    <!-- URL Input Box -->
+                    <div id="urlInputGroup" class="form-group">
+                        <label class="form-label" for="inputPhishUrl">Target URL for Lexical & Heuristic Inspection:</label>
+                        <input type="text" id="inputPhishUrl" class="input-field" placeholder="https://login.microsoftonline.com-auth.xyz/verify.php" value="http://login.microsoftonline.com.corporate-auth-sso.xyz/tenant/login.php?user=employee@company.com">
+                    </div>
+
+                    <!-- Email Input Box -->
+                    <div id="emailInputGroup" style="display: none;" class="scanner-input-box">
+                        <div class="form-group">
+                            <label class="form-label" for="inputEmailSender">Sender Address & Display Header:</label>
+                            <input type="text" id="inputEmailSender" class="input-field" placeholder="security@microsoft-security-auth-check.xyz">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="inputEmailSubject">Subject Line:</label>
+                            <input type="text" id="inputEmailSubject" class="input-field" placeholder="URGENT: Password Expires in 2 Hours">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="inputEmailBody">Email Body Content:</label>
+                            <textarea id="inputEmailBody" class="input-field" rows="4" placeholder="Paste full email body text..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Scan Trigger Button -->
+                    <button class="scan-submit-btn" id="btnExecuteScan" style="margin-top: 1.25rem; width: 100%;" onclick="executePhishScan()">
+                        <span>🔍 Deep Scan with Scikit-Learn & NLP Ensemble</span>
+                    </button>
+                </div>
+
+                <!-- Analysis Output & Risk Meter Card -->
+                <div class="glass-card" id="phishResultsPanel" style="display: block;">
+                    <div class="card-label">Threat Assessment & Explainable ML Verdict</div>
+                    
+                    <div class="threat-meter-card" style="margin-top: 0.75rem;">
+                        <div style="font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase;">Estimated Phishing Probability</div>
+                        <div id="resRiskScore" class="card-value text-danger" style="font-size: 2.75rem; margin: 0.2rem 0;">96.4%</div>
+                        <div id="resThreatBadge" class="threat-badge threat-malicious">MALICIOUS (92.8% Confidence)</div>
+                        <div id="resActionBadge" style="margin-top: 0.6rem; font-size: 0.78rem; font-family: var(--font-mono); color: #fca5a5;">SOC Action: BLOCK_AND_QUARANTINE</div>
+                        <div id="resTargetDisplay" style="font-size: 0.72rem; color: var(--text-dim); margin-top: 0.5rem; word-break: break-all;">Target: login.microsoftonline.com.corporate-auth-sso.xyz</div>
+                    </div>
+
+                    <!-- SHAP Explainability Waterfall -->
+                    <div style="margin-top: 1.25rem;">
+                        <div class="form-label">SHAP-Style Feature Impact Breakdown:</div>
+                        <div class="shap-list" id="shapFeaturesContainer">
+                            <div class="shap-item">
+                                <span>Homoglyph / Punycode Typosquatting (xn--)</span>
+                                <span class="shap-pill-critical">+38%</span>
+                            </div>
+                            <div class="shap-item">
+                                <span>Deep Subdomain Chain (3 levels)</span>
+                                <span class="shap-pill-risk">+22%</span>
+                            </div>
+                            <div class="shap-item">
+                                <span>High-Abuse Top-Level Domain (.xyz)</span>
+                                <span class="shap-pill-risk">+25%</span>
+                            </div>
+                            <div class="shap-item">
+                                <span>Sensitive Auth Keywords: login, microsoft</span>
+                                <span class="shap-pill-risk">+24%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Remediation Steps -->
+                    <div style="margin-top: 1.25rem;">
+                        <div class="form-label">Automated Remediation Playbook:</div>
+                        <ul id="remediationStepsContainer" style="padding-left: 1.2rem; font-size: 0.78rem; color: #cbd5e1; margin-top: 0.4rem; line-height: 1.6;">
+                            <li>Immediate DNS Sinkhole routing applied via Cloudflare/CoreDNS.</li>
+                            <li>Revoke and purge all active session cookies associated with this domain.</li>
+                            <li>Alert Security Operations Center (SOC) with IOC hash.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quarantine Vault Section -->
+            <div class="glass-card" style="margin-top: 1.5rem;">
+                <div class="card-label">
+                    <span>🗄️ Quarantine Vault & MITRE ATT&CK Incident Log</span>
+                    <button class="template-badge" onclick="loadQuarantineVault()">🔄 Refresh Vault</button>
+                </div>
+                <table class="vault-table">
+                    <thead>
+                        <tr>
+                            <th>Incident ID</th>
+                            <th>Timestamp</th>
+                            <th>Threat Vector</th>
+                            <th>Risk Score</th>
+                            <th>MITRE Technique</th>
+                            <th>Automated Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="quarantineVaultBody">
+                        <!-- Injected via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ==========================================
+             VIEW 3: ARCHITECTURE & K8S TOPOLOGY
+             ========================================== -->
+        <section id="viewTopology" class="view-section">
+            <div class="arch-diagram-card">
+                <div class="card-label" style="color: var(--color-petro)">⚡ AI-Powered Petrochemical Telemetry Streaming Architecture</div>
+                <div class="arch-node-flow">
+                    <div class="arch-node">
+                        <div style="font-size: 1.1rem;">🏭</div>
+                        <div style="font-weight: 700; font-size: 0.85rem;">OPC-UA Server</div>
+                        <div style="font-size: 0.7rem; color: var(--text-dim);">Refinery Sensors</div>
+                    </div>
+                    <div class="arch-arrow">➔</div>
+                    <div class="arch-node">
+                        <div style="font-size: 1.1rem;">📨</div>
+                        <div style="font-weight: 700; font-size: 0.85rem;">Apache Kafka</div>
+                        <div style="font-size: 0.7rem; color: var(--text-dim);">Topic: refinery.telemetry</div>
+                    </div>
+                    <div class="arch-arrow">➔</div>
+                    <div class="arch-node">
+                        <div style="font-size: 1.1rem;">⚡</div>
+                        <div style="font-weight: 700; font-size: 0.85rem;">Apache Spark</div>
+                        <div style="font-size: 0.7rem; color: var(--text-dim);">Structured Streaming</div>
+                    </div>
+                    <div class="arch-arrow">➔</div>
+                    <div class="arch-node">
+                        <div style="font-size: 1.1rem;">🏛️</div>
+                        <div style="font-weight: 700; font-size: 0.85rem;">TimescaleDB & Feast</div>
+                        <div style="font-size: 0.7rem; color: var(--text-dim);">Hypertable + Feature Store</div>
+                    </div>
+                    <div class="arch-arrow">➔</div>
+                    <div class="arch-node">
+                        <div style="font-size: 1.1rem;">🧠</div>
+                        <div style="font-weight: 700; font-size: 0.85rem;">ML Ensemble</div>
+                        <div style="font-size: 0.7rem; color: var(--text-dim);">XGBoost • LightGBM • LSTM</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="arch-diagram-card">
+                <div class="card-label" style="color: var(--color-shield)">🛡️ PhishShield Enterprise Threat Detection Architecture</div>
+                <div class="arch-node-flow">
+                    <div class="arch-node">
+                        <div style="font-size: 1.1rem;">🌐</div>
+                        <div style="font-weight: 700; font-size: 0.85rem;">Ingress Gateway</div>
+                        <div style="font-size: 0.7rem; color: var(--text-dim);">FastAPI REST Endpoints</div>
+                    </div>
+                    <div class="arch-arrow">➔</div>
+                    <div class="arch-node">
+                        <div style="font-size: 1.1rem;">🔬</div>
+                        <div style="font-weight: 700; font-size: 0.85rem;">Lexical & NLP Extractor</div>
+                        <div style="font-size: 0.7rem; color: var(--text-dim);">Entropy • TF-IDF • Homoglyphs</div>
+                    </div>
+                    <div class="arch-arrow">➔</div>
+                    <div class="arch-node">
+                        <div style="font-size: 1.1rem;">🌲</div>
+                        <div style="font-weight: 700; font-size: 0.85rem;">Scikit-Learn Ensemble</div>
+                        <div style="font-size: 0.7rem; color: var(--text-dim);">Random Forest + Gradient Boost</div>
+                    </div>
+                    <div class="arch-arrow">➔</div>
+                    <div class="arch-node">
+                        <div style="font-size: 1.1rem;">📊</div>
+                        <div style="font-weight: 700; font-size: 0.85rem;">SHAP Attribution</div>
+                        <div style="font-size: 0.7rem; color: var(--text-dim);">Explainable AI Factors</div>
+                    </div>
+                    <div class="arch-arrow">➔</div>
+                    <div class="arch-node">
+                        <div style="font-size: 1.1rem;">🚨</div>
+                        <div style="font-weight: 700; font-size: 0.85rem;">Quarantine & SIEM</div>
+                        <div style="font-size: 0.7rem; color: var(--text-dim);">Automated IOC Dispatch</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kubernetes Pod Health -->
+            <div class="glass-card">
+                <div class="card-label">☸️ Kubernetes Cluster Deployment Health (Namespace: prod-petro-shield)</div>
+                <table class="vault-table" style="font-family: var(--font-mono); font-size: 0.78rem;">
+                    <thead>
+                        <tr>
+                            <th>Pod Name</th>
+                            <th>Status</th>
+                            <th>CPU</th>
+                            <th>Memory</th>
+                            <th>Restarts</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="color: #38bdf8">opcua-kafka-producer-7df9f8749-x2k4l</td>
+                            <td><span style="color: #34d399">Running</span></td>
+                            <td>120m</td>
+                            <td>310Mi</td>
+                            <td>0</td>
+                        </tr>
+                        <tr>
+                            <td style="color: #38bdf8">spark-streaming-aggregator-0</td>
+                            <td><span style="color: #34d399">Running</span></td>
+                            <td>850m</td>
+                            <td>2.4Gi</td>
+                            <td>0</td>
+                        </tr>
+                        <tr>
+                            <td style="color: #38bdf8">timescaledb-cluster-primary-0</td>
+                            <td><span style="color: #34d399">Running</span></td>
+                            <td>450m</td>
+                            <td>4.1Gi</td>
+                            <td>0</td>
+                        </tr>
+                        <tr>
+                            <td style="color: #38bdf8">feast-online-server-68d75cf88-p8jkm</td>
+                            <td><span style="color: #34d399">Running</span></td>
+                            <td>85m</td>
+                            <td>190Mi</td>
+                            <td>0</td>
+                        </tr>
+                        <tr>
+                            <td style="color: #38bdf8">mlflow-model-server-84fccbc56-q792z</td>
+                            <td><span style="color: #34d399">Running</span></td>
+                            <td>310m</td>
+                            <td>780Mi</td>
+                            <td>0</td>
+                        </tr>
+                        <tr>
+                            <td style="color: #38bdf8">prometheus-stack-grafana-76c8bbdbd-t6v8b</td>
+                            <td><span style="color: #34d399">Running</span></td>
+                            <td>65m</td>
+                            <td>140Mi</td>
+                            <td>0</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ==========================================
+             VIEW 4: INTERACTIVE REST API SANDBOX
+             ========================================== -->
+        <section id="viewSandbox" class="view-section">
+            <div class="dashboard-grid">
+                <div class="glass-card">
+                    <div class="card-label">⚡ Live REST API Sandbox & Endpoints</div>
+                    <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: 1rem;">
+                        <button class="anomaly-btn" style="color: #38bdf8; border-color: rgba(56, 189, 248, 0.3); background: rgba(56, 189, 248, 0.08);" onclick="runApiSandbox('/api/v1/petro/telemetry', 'GET', null)">
+                            <span>GET /api/v1/petro/telemetry (Latest Sensor Snapshot)</span>
+                            <span>▶</span>
+                        </button>
+                        <button class="anomaly-btn" style="color: #38bdf8; border-color: rgba(56, 189, 248, 0.3); background: rgba(56, 189, 248, 0.08);" onclick="runApiSandbox('/api/v1/petro/mlops-registry', 'GET', null)">
+                            <span>GET /api/v1/petro/mlops-registry (Feast Store & Models)</span>
+                            <span>▶</span>
+                        </button>
+                        <button class="anomaly-btn" style="color: #34d399; border-color: rgba(52, 211, 153, 0.3); background: rgba(52, 211, 153, 0.08);" onclick="runApiSandbox('/api/v1/phish/scan-url', 'POST', JSON.stringify({url: 'http://login.microsoftonline.com-auth.xyz/verify'}))">
+                            <span>POST /api/v1/phish/scan-url (Inspect Malicious URL)</span>
+                            <span>▶</span>
+                        </button>
+                        <button class="anomaly-btn" style="color: #34d399; border-color: rgba(52, 211, 153, 0.3); background: rgba(52, 211, 153, 0.08);" onclick="runApiSandbox('/api/v1/phish/vault', 'GET', null)">
+                            <span>GET /api/v1/phish/vault (Quarantined Incident List)</span>
+                            <span>▶</span>
+                        </button>
+                        <button class="anomaly-btn" style="color: #a78bfa; border-color: rgba(167, 139, 250, 0.3); background: rgba(167, 139, 250, 0.08);" onclick="runApiSandbox('/api/v1/health', 'GET', null)">
+                            <span>GET /api/v1/health (Platform Health Check)</span>
+                            <span>▶</span>
+                        </button>
+                    </div>
+
+                    <!-- Code snippet -->
+                    <div style="margin-top: 1.5rem;">
+                        <div class="form-label">Python SDK Integration Example:</div>
+                        <pre class="code-block"><code>import requests
+
+# 1. Query Petrochemical LSTM Prediction
+res = requests.get("http://localhost:8000/api/v1/petro/telemetry")
+print("RUL Hours:", res.json()["units"]["FCC-01"]["rul_hours_xgboost"])
+
+# 2. Perform PhishShield Threat Scan
+scan = requests.post(
+    "http://localhost:8000/api/v1/phish/scan-url",
+    json={"url": "https://secure-chase-onlinebanking-alert.top/auth"}
+)
+print("Risk Score:", scan.json()["risk_score"], "%")</code></pre>
+                    </div>
+                </div>
+
+                <!-- API Response Output Viewer -->
+                <div class="glass-card">
+                    <div class="card-label">Live JSON Payload Response</div>
+                    <pre id="sandboxResponseOutput" class="code-block" style="height: 480px; overflow-y: auto; color: #a5f3fc;">Click any endpoint on the left to execute live REST request...</pre>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Scripts -->
+    <script src="/static/js/petro_charts.js"></script>
+    <script src="/static/js/phish_analyzer.js"></script>
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
